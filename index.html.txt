@@ -1,0 +1,1377 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Céu • IA Inteligente</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    /* 
+    ========================================
+    CSS Customizado - Melhorias e Refinamentos
+    ========================================
+    */
+    * {
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #0f172a 0%, #1e2937 50%, #0c1220 100%);
+      overflow-x: hidden;
+    }
+
+    /* Chat Bubbles */
+    .chat-bubble-user {
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+      /* Adicionado transição para suavizar */
+      transition: all 0.3s ease-in-out; 
+    }
+
+    .chat-bubble-ai {
+      background: linear-gradient(135deg, #334155, #1e2937);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      /* Adicionado transição para suavizar */
+      transition: all 0.3s ease-in-out;
+    }
+
+    /* Animação de FadeIn para mensagens */
+    .message {
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Animação de Gradiente para ícones */
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .gradient-animated {
+      background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+      background-size: 400% 400%;
+      animation: gradientShift 5s ease infinite;
+    }
+
+    /* Efeito Glassmorphism (já estava presente, mas garantindo) */
+    .glass-effect {
+      background: rgba(30, 41, 59, 0.7);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+
+    /* Scrollbar Customizada */
+    .scrollbar-custom::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .scrollbar-custom::-webkit-scrollbar-track {
+      background: #1e2937;
+    }
+
+    .scrollbar-custom::-webkit-scrollbar-thumb {
+      background: #475569;
+      border-radius: 4px;
+    }
+
+    .scrollbar-custom::-webkit-scrollbar-thumb:hover {
+      background: #64748b;
+    }
+
+    /* Animação de Digitação */
+    .typing-dot {
+      animation: typingBounce 1.4s infinite;
+    }
+
+    .typing-dot:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .typing-dot:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+
+    @keyframes typingBounce {
+      0%, 60%, 100% {
+        transform: translateY(0);
+      }
+      30% {
+        transform: translateY(-6px); /* Ajustado para um bounce mais suave */
+      }
+    }
+
+    /* Animação Pulse Glow para ícones */
+    .pulse-glow {
+      animation: pulseGlow 2s infinite cubic-bezier(0.4, 0, 0.6, 1); /* Adicionado cubic-bezier para suavidade */
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% {
+        box-shadow: 0 0 15px rgba(139, 92, 246, 0.4); /* Sombra inicial mais suave */
+      }
+      50% {
+        box-shadow: 0 0 30px rgba(139, 92, 246, 0.7); /* Sombra no pico mais intensa */
+      }
+    }
+
+    /* Transições para Sidebar */
+    .sidebar-transition {
+      transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+    }
+
+    /* Estilização de Blocos de Código e Markdown */
+    .code-block {
+      background: #1e2937;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      padding: 16px;
+      font-family: 'Fira Code', 'Courier New', monospace; /* Fonte mais profissional para código */
+      font-size: 14px;
+      overflow-x: auto;
+      margin-top: 12px; /* Espaçamento */
+      margin-bottom: 12px; /* Espaçamento */
+    }
+    .code-block code {
+        display: block; /* Garante que o código ocupe todo o bloco */
+        white-space: pre-wrap; /* Quebra de linha para código */
+    }
+
+    .markdown-content h1 {
+      font-size: 28px; /* Aumentado */
+      font-weight: 700;
+      margin: 24px 0 16px; /* Ajustado espaçamento */
+      color: #f1f5f9;
+      border-bottom: 1px solid #334155; /* Linha sutil */
+      padding-bottom: 8px;
+    }
+
+    .markdown-content h2 {
+      font-size: 24px; /* Aumentado */
+      font-weight: 600;
+      margin: 20px 0 12px; /* Ajustado espaçamento */
+      color: #e2e8f0;
+    }
+
+    .markdown-content h3 {
+      font-size: 18px; /* Aumentado */
+      font-weight: 600;
+      margin: 16px 0 10px; /* Ajustado espaçamento */
+      color: #cbd5e1;
+    }
+
+    .markdown-content p {
+      margin: 10px 0; /* Ajustado espaçamento */
+      line-height: 1.7; /* Aumentado line-height para melhor leitura */
+    }
+
+    .markdown-content ul, .markdown-content ol { /* Adicionado ol */
+      margin: 10px 0; /* Ajustado espaçamento */
+      padding-left: 28px; /* Aumentado padding */
+    }
+
+    .markdown-content li {
+      margin: 6px 0; /* Ajustado espaçamento */
+      line-height: 1.7;
+    }
+
+    .markdown-content strong {
+      color: #f1f5f9;
+      font-weight: 700; /* Mais negrito */
+    }
+
+    .markdown-content em {
+      color: #cbd5e1;
+      font-style: italic;
+    }
+
+    .markdown-content a {
+      color: #8b5cf6;
+      text-decoration: underline;
+      transition: color 0.2s ease; /* Transição para links */
+    }
+    .markdown-content a:hover {
+        color: #a78bfa;
+    }
+
+    .markdown-content code {
+      background: #1e2937;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: 'Fira Code', 'Courier New', monospace;
+      font-size: 13px;
+      color: #f472b6;
+    }
+
+    .markdown-content pre code {
+      background: transparent;
+      padding: 0;
+    }
+
+    .markdown-content blockquote {
+      border-left: 4px solid #8b5cf6;
+      padding-left: 16px;
+      margin: 16px 0; /* Ajustado espaçamento */
+      color: #cbd5e1;
+      font-style: italic;
+      background-color: rgba(139, 92, 246, 0.1); /* Fundo sutil */
+      padding: 12px 16px;
+      border-radius: 8px;
+    }
+
+    .markdown-content table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0; /* Ajustado espaçamento */
+    }
+
+    .markdown-content th {
+      background: #334155;
+      padding: 12px; /* Ajustado padding */
+      text-align: left;
+      font-weight: 600;
+      border: 1px solid #475569;
+    }
+
+    .markdown-content td {
+      padding: 12px; /* Ajustado padding */
+      border: 1px solid #475569;
+    }
+
+    .markdown-content tr:nth-child(even) {
+      background: #1e2937;
+    }
+
+    /* Badge de Notificação */
+    .notification-badge {
+      position: absolute;
+      top: -4px;
+      right: -4px;
+      background: #ef4444;
+      color: white;
+      border-radius: 10px;
+      padding: 2px 6px;
+      font-size: 10px;
+      font-weight: 700;
+      animation: bounce 1s infinite; /* Animação para o badge */
+    }
+    @keyframes bounce {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+    }
+
+    /* Cards de Funcionalidades Interativos */
+    .feature-card {
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
+      border: 1px solid rgba(139, 92, 246, 0.3);
+      border-radius: 16px;
+      padding: 20px;
+      transition: all 0.3s ease;
+      position: relative; /* Para o efeito de brilho */
+      overflow: hidden;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-6px); /* Aumentado o deslocamento */
+      border-color: rgba(139, 92, 246, 0.6);
+      box-shadow: 0 12px 35px rgba(139, 92, 246, 0.25); /* Sombra mais pronunciada */
+    }
+
+    /* Efeito de brilho no hover para feature-card */
+    .feature-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.1);
+        transform: skewX(-30deg);
+        transition: all 0.5s ease;
+    }
+
+    .feature-card:hover::before {
+        left: 100%;
+    }
+
+    /* Seleção de Modelo */
+    .model-selector {
+      background: #1e2937;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 12px;
+      margin: 8px 0;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .model-selector:hover {
+      background: #334155;
+      border-color: #8b5cf6;
+    }
+
+    .model-selector.active {
+      background: rgba(139, 92, 246, 0.2);
+      border-color: #8b5cf6;
+    }
+
+    /* Estilo para input/textarea */
+    .input-field {
+        background-color: #1e2937; /* Cor de fundo mais escura */
+        border-color: #334155; /* Borda mais escura */
+        color: #f1f5f9; /* Cor do texto */
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .input-field:focus {
+        border-color: #8b5cf6; /* Borda roxa no foco */
+        box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.3); /* Sombra roxa no foco */
+    }
+
+    /* Transições para botões */
+    .btn-primary {
+        background: linear-gradient(to right, #8b5cf6, #6366f1);
+        transition: all 0.3s ease;
+    }
+    .btn-primary:hover {
+        background: linear-gradient(to right, #6d28d9, #4f46e5);
+        box-shadow: 0 8px 20px rgba(139, 92, 246, 0.4);
+    }
+
+    .btn-secondary {
+        background-color: #475569;
+        transition: all 0.3s ease;
+    }
+    .btn-secondary:hover {
+        background-color: #64748b;
+    }
+
+    /* Estilo para o modal */
+    .modal-content {
+        background: #1e2937; /* Fundo mais escuro */
+        border: 1px solid #334155; /* Borda mais sutil */
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4); /* Sombra mais profunda */
+    }
+
+    /* Estilo para links de navegação */
+    .nav-link {
+        color: #cbd5e1;
+        transition: color 0.2s ease, transform 0.2s ease;
+    }
+    .nav-link:hover {
+        color: #8b5cf6;
+        transform: translateY(-2px);
+    }
+
+  </style>
+  <!-- Adicionado Fira Code para melhor visualização de código -->
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body class="text-white min-h-screen">
+  <!-- Header - Efeito Glassmorphism -->
+  <header class="border-b border-slate-700 bg-slate-900/80 backdrop-blur-lg fixed w-full z-50"> <!-- backdrop-blur-lg para mais blur -->
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <button onclick="toggleSidebar()" class="lg:hidden text-slate-300 hover:text-white transition">
+          <i class="fas fa-bars text-2xl"></i>
+        </button>
+        <div class="w-10 h-10 bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 rounded-3xl flex items-center justify-center text-3xl font-bold shadow-lg pulse-glow">☁️</div>
+        <div>
+          <h1 class="text-3xl font-bold tracking-tighter">Céu</h1>
+          <p class="text-xs text-slate-400 -mt-1">IA Inteligente • Llama-3.3 70B</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3 sm:gap-4">
+        <button onclick="showHistory()" class="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 rounded-2xl text-sm flex items-center gap-2 transition nav-link">
+          <i class="fas fa-history"></i>
+          <span class="hidden sm:inline">Histórico</span>
+        </button>
+
+        <button onclick="showConfig()" class="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 rounded-2xl text-sm flex items-center gap-2 transition nav-link">
+          <i class="fas fa-key"></i>
+          <span class="hidden sm:inline">API Key</span>
+        </button>
+
+        <button onclick="showSettings()" class="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 rounded-2xl text-sm flex items-center gap-2 transition relative nav-link">
+          <i class="fas fa-cog"></i>
+          <span class="hidden sm:inline">Ajustes</span>
+          <span id="settings-badge" class="notification-badge hidden">!</span> <!-- Badge de notificação -->
+        </button>
+
+        <div id="user-info" class="flex items-center gap-3 cursor-pointer" onclick="logout()">
+          <div class="text-right hidden sm:block">
+            <p class="font-medium text-sm">Gon</p>
+            <p class="text-xs text-green-400"><i class="fas fa-circle text-[8px] mr-1"></i>Online</p>
+          </div>
+          <div class="w-9 h-9 bg-gradient-to-br from-purple-400 to-pink-500 rounded-2xl flex items-center justify-center font-bold text-lg shadow-lg">G</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="flex h-screen pt-16">
+    <!-- Sidebar - Histórico de Conversas -->
+    <div id="sidebar" class="sidebar-transition fixed lg:relative inset-y-0 left-0 w-72 bg-slate-900 border-r border-slate-700 transform -translate-x-full lg:translate-x-0 z-40 flex flex-col">
+      <div class="p-6 border-b border-slate-700">
+        <button onclick="newChat()" class="w-full btn-primary py-3 rounded-2xl font-medium flex items-center justify-center gap-2 transition shadow-lg">
+          <i class="fas fa-plus"></i>
+          Novo Chat
+        </button>
+      </div>
+
+      <div class="flex-1 overflow-y-auto scrollbar-custom p-4">
+        <p class="text-xs text-slate-400 mb-3 font-semibold uppercase tracking-wider">Conversas Recentes</p>
+        <div id="chat-history-list" class="space-y-2">
+          <!-- Conteúdo do histórico carregado via JS -->
+        </div>
+      </div>
+
+      <div class="p-4 border-t border-slate-700">
+        <div class="feature-card mb-3">
+          <p class="text-xs text-slate-300 mb-2"><i class="fas fa-brain text-purple-400 mr-2"></i>Modelo Atual</p>
+          <p class="text-sm font-semibold" id="sidebar-model-name">Llama-3.3 70B</p>
+          <p class="text-xs text-slate-400 mt-1">Mais poderoso e rápido</p>
+        </div>
+
+        <button onclick="clearAllHistory()" class="w-full py-2.5 bg-red-900/30 hover:bg-red-900/50 border border-red-700 rounded-xl text-sm flex items-center justify-center gap-2 transition text-red-300">
+          <i class="fas fa-trash"></i>
+          Limpar Histórico
+        </button>
+      </div>
+    </div>
+
+    <!-- Chat Principal -->
+    <div class="flex-1 flex flex-col">
+      <!-- Barra de Status do Modelo -->
+      <div class="border-b border-slate-700 bg-slate-900 px-8 py-4 flex items-center justify-between">
+        <div class="flex items-center gap-4">
+          <div class="w-9 h-9 bg-gradient-to-br from-indigo-400 to-purple-500 rounded-2xl flex items-center justify-center text-2xl pulse-glow">☁️</div>
+          <div>
+            <h2 class="font-semibold text-lg">Céu</h2>
+            <p class="text-xs text-emerald-400 flex items-center gap-1">
+              <span class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>
+              <span id="model-status">Llama-3.3 70B • Online</span>
+            </p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <button onclick="exportChat()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 rounded-xl text-xs flex items-center gap-2 transition nav-link">
+            <i class="fas fa-download"></i>
+            Exportar
+          </button>
+          <button onclick="copyChat()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 rounded-xl text-xs flex items-center gap-2 transition nav-link">
+            <i class="fas fa-copy"></i>
+            Copiar
+          </button>
+          <button onclick="toggleTheme()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 rounded-xl text-xs flex items-center gap-2 transition nav-link">
+            <i class="fas fa-moon"></i>
+            Tema
+          </button>
+        </div>
+      </div>
+
+      <!-- Aviso de API -->
+      <div id="api-warning" class="bg-amber-900/30 border-b border-amber-700 py-3 px-6 text-center text-amber-300 text-sm">
+        <strong>🔑 Adicione sua API aqui</strong> — Qualquer API compatível com OpenAI funciona (Groq, OpenAI, DeepSeek, etc)
+      </div>
+
+      <!-- Área do Chat -->
+      <div id="chat" class="flex-1 overflow-y-auto p-8 space-y-8 bg-slate-950 scrollbar-custom"></div>
+
+      <!-- Input de Mensagem -->
+      <div class="p-6 bg-slate-900 border-t border-slate-700">
+        <div class="max-w-4xl mx-auto">
+          <!-- Sugestões de Mensagens Rápidas -->
+          <div id="quick-prompts" class="flex flex-wrap gap-2 mb-4 justify-center">
+            <button onclick="sendPrompt('Explique quantum computing de forma simples')" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-xl text-xs transition btn-secondary">
+              ☁️ Quantum Computing
+            </button>
+            <button onclick="sendPrompt('Crie um código Python para automação')" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-xl text-xs transition btn-secondary">
+              💻 Código Python
+            </button>
+            <button onclick="sendPrompt('Me ajude a planejar uma viagem')" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-xl text-xs transition btn-secondary">
+              ✈️ Planejar Viagem
+            </button>
+            <button onclick="sendPrompt('Dê ideias de projetos com IA')" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-xl text-xs transition btn-secondary">
+              🤖 Ideias de IA
+            </button>
+          </div>
+
+          <div class="relative">
+            <textarea
+              id="user-input"
+              rows="1"
+              placeholder="Digite sua mensagem para Céu... (Enter para enviar, Shift+Enter para nova linha)"
+              class="w-full bg-slate-800 border border-slate-700 rounded-3xl px-8 py-6 pr-24 text-lg focus:outline-none focus:border-purple-500 resize-y min-h-[60px] max-h-[200px] scrollbar-custom input-field"
+              onkeydown="if(event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); sendMessage(); }"
+            ></textarea>
+            <div class="absolute right-4 bottom-4 flex gap-2">
+              <button onclick="attachFile()" class="text-slate-400 hover:text-purple-400 transition p-2">
+                <i class="fas fa-paperclip text-xl"></i>
+              </button>
+              <button onclick="sendMessage()"
+                      id="send-btn"
+                      class="bg-gradient-to-br from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 w-12 h-12 rounded-2xl flex items-center justify-center transition shadow-lg btn-primary">
+                <i class="fas fa-paper-plane"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="mt-3 flex items-center justify-between text-xs text-slate-500">
+            <p><i class="fas fa-shield-alt text-green-400 mr-1"></i> Suas mensagens são privadas e seguras</p>
+            <p id="char-count">0 / 4000 caracteres</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Configuração API -->
+  <div id="config-modal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-50">
+    <div class="modal-content rounded-3xl p-8 max-w-md w-full mx-4 shadow-2xl">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-2xl font-bold">🔑 Configurar API Key</h3>
+        <button onclick="hideConfig()" class="text-slate-400 hover:text-white transition">
+          <i class="fas fa-times text-xl"></i>
+        </button>
+      </div>
+
+      <p class="text-slate-400 mb-6">Qualquer API compatível com OpenAI funciona</p>
+
+      <input id="api-key" type="password" placeholder="cole sua api key aqui"
+             class="w-full bg-slate-800 border border-slate-700 rounded-2xl px-5 py-4 mb-6 focus:outline-none focus:border-purple-500 text-lg input-field">
+
+      <div class="bg-slate-800 rounded-xl p-4 mb-4">
+        <p class="text-xs text-slate-400 mb-3 font-semibold">📋 Provedores Suportados:</p>
+        <div class="space-y-2 text-sm">
+          <div class="flex items-center gap-2">
+            <i class="fas fa-bolt text-yellow-400"></i>
+            <span><strong>Groq</strong> — Mais rápido e grátis</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <i class="fas fa-robot text-blue-400"></i>
+            <span><strong>OpenAI</strong> — GPT-4, GPT-3.5</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <i class="fas fa-brain text-purple-400"></i>
+            <span><strong>DeepSeek</strong> — Modelo chinês poderoso</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <i class="fas fa-cube text-pink-400"></i>
+            <span><strong>Mistral</strong> — Modelo open-source</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex gap-4">
+        <button onclick="saveApiKey()" class="flex-1 btn-primary py-4 rounded-2xl font-medium transition">Salvar API Key</button>
+        <button onclick="hideConfig()" class="flex-1 btn-secondary py-4 rounded-2xl transition">Fechar</button>
+      </div>
+
+      <a href="https://console.groq.com/keys" target="_blank" class="text-purple-400 hover:text-purple-300 hover:underline text-sm mt-6 block text-center transition">
+        → Criar chave grátis no Groq (recomendado)
+      </a>
+    </div>
+  </div>
+
+  <!-- Modal Configurações -->
+  <div id="settings-modal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-50">
+    <div class="modal-content rounded-3xl p-8 max-w-lg w-full mx-4 shadow-2xl max-h-[90vh] overflow-y-auto scrollbar-custom">
+      <div class="flex items-center justify-between mb-6">
+        <h3 class="text-2xl font-bold">⚙️ Configurações</h3>
+        <button onclick="hideSettings()" class="text-slate-400 hover:text-white transition">
+          <i class="fas fa-times text-xl"></i>
+        </button>
+      </div>
+
+      <!-- Seleção de Modelo -->
+      <div class="mb-6">
+        <h4 class="font-semibold mb-3 flex items-center gap-2">
+          <i class="fas fa-robot text-purple-400"></i>
+          Modelo de IA
+        </h4>
+        <div id="model-list" class="space-y-2">
+          <div class="model-selector active" data-model-id="llama-3.3-70b-versatile" onclick="selectModel('llama-3.3-70b-versatile', this)">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="font-semibold">Llama-3.3 70B</p>
+                <p class="text-xs text-slate-400">Mais poderoso • Recomendado</p>
+              </div>
+              <i class="fas fa-check text-green-400"></i>
+            </div>
+          </div>
+          <div class="model-selector" data-model-id="llama-3.1-8b-instant" onclick="selectModel('llama-3.1-8b-instant', this)">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="font-semibold">Llama-3.1 8B</p>
+                <p class="text-xs text-slate-400">Mais rápido • Leve</p>
+              </div>
+              <i class="fas fa-check text-green-400 hidden"></i>
+            </div>
+          </div>
+          <div class="model-selector" data-model-id="mixtral-8x7b-32768" onclick="selectModel('mixtral-8x7b-32768', this)">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="font-semibold">Mixtral 8x7B</p>
+                <p class="text-xs text-slate-400">Equilibrado • Eficiente</p>
+              </div>
+              <i class="fas fa-check text-green-400 hidden"></i>
+            </div>
+          </div>
+          <!-- Adicione outros modelos aqui se desejar -->
+        </div>
+      </div>
+
+      <!-- Temperatura -->
+      <div class="mb-6">
+        <h4 class="font-semibold mb-3 flex items-center gap-2">
+          <i class="fas fa-thermometer-half text-purple-400"></i>
+          Temperatura: <span id="temp-value">0.75</span>
+        </h4>
+        <input type="range" id="temperature" min="0" max="2" step="0.1" value="0.75"
+               class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer"
+               oninput="updateTemp(this.value)">
+        <p class="text-xs text-slate-400 mt-2">Menos = mais focado • Mais = mais criativo</p>
+      </div>
+
+      <!-- Máximo de Tokens -->
+      <div class="mb-6">
+        <h4 class="font-semibold mb-3 flex items-center gap-2">
+          <i class="fas fa-align-left text-purple-400"></i>
+          Máximo de Tokens: <span id="tokens-value">1024</span>
+        </h4>
+        <input type="range" id="max-tokens" min="256" max="4096" step="256" value="1024"
+               class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer"
+               oninput="updateTokens(this.value)">
+        <p class="text-xs text-slate-400 mt-2">Mais tokens = respostas mais longas</p>
+      </div>
+
+      <!-- Modo Criativo -->
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <h4 class="font-semibold flex items-center gap-2">
+            <i class="fas fa-magic text-purple-400"></i>
+            Modo Criativo
+          </h4>
+          <p class="text-xs text-slate-400">Respostas mais criativas e diversificadas</p>
+        </div>
+        <label class="relative inline-flex items-center cursor-pointer">
+          <input type="checkbox" id="creative-mode" class="sr-only peer" onchange="toggleCreativeMode()">
+          <div class="w-11 h-6 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+        </label>
+      </div>
+
+      <!-- Salvar Configurações -->
+      <button onclick="saveSettings()" class="w-full btn-primary py-4 rounded-2xl font-medium transition">
+        <i class="fas fa-save mr-2"></i>
+        Salvar Configurações
+      </button>
+    </div>
+  </div>
+
+  <!-- Modal Histórico -->
+  <div id="history-modal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-50">
+    <div class="modal-content rounded-3xl p-8 max-w-2xl w-full mx-4 shadow-2xl max-h-[80vh] overflow-y-auto scrollbar-custom">
+      <div class="flex items-center justify-between mb-6">
+        <h3 class="text-2xl font-bold">📜 Histórico de Conversas</h3>
+        <button onclick="hideHistory()" class="text-slate-400 hover:text-white transition">
+          <i class="fas fa-times text-xl"></i>
+        </button>
+      </div>
+
+      <div id="history-list" class="space-y-3">
+        <!-- Conteúdo do histórico carregado via JS -->
+      </div>
+
+      <button onclick="clearAllHistory()" class="w-full mt-4 py-3 bg-red-900/30 hover:bg-red-900/50 border border-red-700 rounded-xl text-sm flex items-center justify-center gap-2 transition text-red-300">
+        <i class="fas fa-trash"></i>
+        Limpar Todo Histórico
+      </button>
+    </div>
+  </div>
+
+  <!-- Modal Sobre -->
+  <div id="about-modal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-50">
+    <div class="modal-content rounded-3xl p-8 max-w-md w-full mx-4 shadow-2xl text-center">
+      <div class="w-20 h-20 bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 rounded-3xl flex items-center justify-center text-5xl font-bold mx-auto mb-4 pulse-glow">☁️</div>
+      <h3 class="text-3xl font-bold mb-2 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">Céu</h3>
+      <p class="text-lg text-slate-400 mb-4">IA Inteligente</p>
+
+      <div class="bg-slate-800 rounded-xl p-4 mb-6 text-left">
+        <div class="space-y-2 text-sm">
+          <p><strong class="text-purple-400">Versão:</strong> 2.0.0</p>
+          <p><strong class="text-purple-400">Modelo:</strong> Llama-3.3 70B</p>
+          <p><strong class="text-purple-400">Criado por:</strong> Gon</p>
+          <p><strong class="text-purple-400">Tecnologia:</strong> Groq + OpenAI API</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3 mb-6">
+        <div class="feature-card">
+          <i class="fas fa-bolt text-3xl mb-2"></i>
+          <p class="font-semibold">Ultra Rápido</p>
+          <p class="text-xs text-slate-400">Respostas em segundos</p>
+        </div>
+        <div class="feature-card">
+          <i class="fas fa-shield-alt text-3xl mb-2"></i>
+          <p class="font-semibold">Seguro</p>
+          <p class="text-xs text-slate-400">Dados privados</p>
+        </div>
+        <div class="feature-card">
+          <i class="fas fa-brain text-3xl mb-2"></i>
+          <p class="font-semibold">Inteligente</p>
+          <p class="text-xs text-slate-400">IA 70B parâmetros</p>
+        </div>
+        <div class="feature-card">
+          <i class="fas fa-globe text-3xl mb-2"></i>
+          <p class="font-semibold">Português</p>
+          <p class="text-xs text-slate-400">Nativo BR</p>
+        </div>
+      </div>
+
+      <button onclick="closeAbout()" class="w-full btn-primary py-3 rounded-2xl font-medium transition">
+        Começar a Usar
+      </button>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script> <!-- Adicionado Marked.js para Markdown robusto -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script> <!-- Adicionado Highlight.js para destaque de sintaxe -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css"> <!-- Tema Dark para Highlight.js -->
+
+  <script>
+    // Variáveis globais
+    let apiKey = localStorage.getItem('api_key') || '';
+    let messages = []; // Mensagens da conversa atual
+    let currentModel = localStorage.getItem('model') || 'llama-3.3-70b-versatile';
+    let temperature = parseFloat(localStorage.getItem('temperature')) || 0.75;
+    let maxTokens = parseInt(localStorage.getItem('max_tokens')) || 1024;
+    let creativeMode = localStorage.getItem('creative_mode') === 'true';
+    let chatHistory = JSON.parse(localStorage.getItem('chat_history') || '[]'); // Histórico de todas as conversas
+    let currentChatId = Date.now(); // ID da conversa atual
+    let isTyping = false; // Flag para controlar o estado de digitação
+    let settingsChanged = false; // Flag para notificação de ajustes
+
+    // Inicialização
+    window.onload = () => {
+      addInitialMessage();
+      document.getElementById('user-input').focus();
+      updateCharCount();
+      loadSettings();
+      loadChatHistory();
+      checkApiKeyAndShowWarning();
+      checkFirstVisitAndShowAbout();
+
+      // Inicializa Highlight.js
+      hljs.highlightAll();
+    };
+
+    // --- Funções de Inicialização e Verificação ---
+
+    function checkApiKeyAndShowWarning() {
+      if (!apiKey) {
+        setTimeout(() => {
+          showNotification('👋 Bem-vindo ao Céu! Clique no botão API Key para adicionar sua chave.', 'info', 5000);
+          document.getElementById('api-warning').classList.remove('hidden');
+          document.getElementById('settings-badge').classList.remove('hidden'); // Mostra badge se API não configurada
+        }, 800);
+      } else {
+        document.getElementById('api-warning').classList.add('hidden');
+      }
+    }
+
+    function checkFirstVisitAndShowAbout() {
+      if (!localStorage.getItem('visited')) {
+        localStorage.setItem('visited', 'true');
+        setTimeout(() => {
+          document.getElementById('about-modal').classList.remove('hidden');
+        }, 1500);
+      }
+    }
+
+    // --- Funções de Mensagem e Chat ---
+
+    function addInitialMessage() {
+      const chatArea = document.getElementById('chat');
+      if (messages.length === 0) { // Adiciona mensagem inicial apenas se o chat estiver vazio
+        chatArea.innerHTML = `
+          <div class="max-w-3xl mx-auto text-center pt-20">
+            <div class="text-7xl mb-6">☁️</div>
+            <h1 class="text-5xl font-bold mb-4 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+              Olá, Gon!
+            </h1>
+            <p class="text-slate-400 text-xl">Sou <span class="text-purple-400 font-medium">Céu</span>, sua IA amigável e inteligente.<br>Em que posso te ajudar hoje?</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-12 text-left">
+              <div class="feature-card cursor-pointer" onclick="sendPrompt('Explique machine learning de forma simples')">
+                <i class="fas fa-brain text-3xl mb-3 text-purple-400"></i>
+                <p class="font-semibold">Aprender sobre IA</p>
+                <p class="text-xs text-slate-400">Entenda conceitos de inteligência artificial</p>
+              </div>
+              <div class="feature-card cursor-pointer" onclick="sendPrompt('Crie um código Python para automação de arquivos')">
+                <i class="fas fa-code text-3xl mb-3 text-blue-400"></i>
+                <p class="font-semibold">Gerar Código</p>
+                <p class="text-xs text-slate-400">Python, JavaScript, e mais</p>
+              </div>
+              <div class="feature-card cursor-pointer" onclick="sendPrompt('Me ajude a planejar um projeto de desenvolvimento')">
+                <i class="fas fa-project-diagram text-3xl mb-3 text-green-400"></i>
+                <p class="font-semibold">Planejar Projetos</p>
+                <p class="text-xs text-slate-400">Organização e estratégia</p>
+              </div>
+              <div class="feature-card cursor-pointer" onclick="sendPrompt('Dê ideias criativas para aplicação com IA')">
+                <i class="fas fa-lightbulb text-3xl mb-3 text-yellow-400"></i>
+                <p class="font-semibold">Ideias Criativas</p>
+                <p class="text-xs text-slate-400">Inovação e criatividade</p>
+              </div>
+            </div>
+          </div>`;
+      }
+    }
+
+    function addMessage(content, role, duration = null) {
+      const chat = document.getElementById('chat');
+
+      // Remover mensagem inicial se existir
+      if (chat.querySelector('.max-w-3xl')) {
+        chat.innerHTML = '';
+      }
+
+      const div = document.createElement('div');
+      div.className = `flex ${role === 'user' ? 'justify-end' : 'justify-start'} message`;
+
+      const formattedContent = role === 'assistant' ? formatMarkdown(content) : escapeHtml(content);
+
+      div.innerHTML = `
+        <div class="max-w-[85%] ${role === 'user' ? 'chat-bubble-user' : 'chat-bubble-ai'} rounded-3xl px-6 py-4">
+          ${role === 'assistant' ? '<div class="flex items-center gap-2 mb-3 pb-2 border-b border-slate-600"><div class="w-6 h-6 bg-gradient-to-br from-indigo-400 to-purple-500 rounded-lg flex items-center justify-center text-sm">☁️</div><span class="text-sm font-semibold text-purple-400">Céu</span></div>' : ''}
+          <div class="markdown-content leading-relaxed whitespace-pre-wrap">${formattedContent}</div>
+          ${role === 'assistant' ? `<div class="flex gap-3 mt-3 pt-3 border-t border-slate-600 text-xs text-slate-400">
+            <button onclick="copyMessage('${encodeURIComponent(content)}')" class="hover:text-purple-400 transition"><i class="fas fa-copy mr-1"></i>Copiar</button>
+            <button onclick="regenerateResponse()" class="hover:text-purple-400 transition"><i class="fas fa-sync-alt mr-1"></i>Regenerar</button>
+            ${duration !== null ? `<span class="ml-auto text-slate-500"><i class="fas fa-hourglass-half mr-1"></i>${duration}s</span>` : ''}
+          </div>` : ''}
+        </div>
+      `;
+      chat.appendChild(div);
+      chat.scrollTop = chat.scrollHeight;
+
+      // Realça blocos de código após adicionar a mensagem
+      hljs.highlightAll();
+    }
+
+    // Usando Marked.js para renderização robusta de Markdown
+    function formatMarkdown(text) {
+        // Configurações do Marked.js para renderizar blocos de código com Highlight.js
+        marked.setOptions({
+            highlight: function(code, lang) {
+                const language = hljs.getLanguage(lang) ? lang : 'plaintext';
+                return hljs.highlight(code, { language }).value;
+            },
+            langPrefix: 'hljs language-', // prefix for autodetected language classes
+            gfm: true, // GitHub Flavored Markdown
+            breaks: true, // Adiciona <br> para quebras de linha simples
+            // Adicione outras opções conforme necessário
+        });
+
+        // Custom renderer para envolver blocos de código em div.code-block
+        const renderer = new marked.Renderer();
+        renderer.code = (code, lang) => {
+            const highlightedCode = marked.options.highlight(code, lang);
+            return `<div class="code-block"><pre><code class="hljs language-${lang || 'plaintext'}">${highlightedCode}</code></pre></div>`;
+        };
+
+        // Renderiza o Markdown
+        return marked.parse(text, { renderer: renderer });
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function showTyping() {
+      if (isTyping) return; // Evita múltiplas indicações de digitação
+      isTyping = true;
+      const chat = document.getElementById('chat');
+      const typing = document.createElement('div');
+      typing.id = 'typing';
+      typing.className = 'flex justify-start message'; // Adicionado 'message' para animação
+      typing.innerHTML = `
+        <div class="bg-slate-700 rounded-3xl px-6 py-4 flex items-center gap-3">
+          <div class="w-6 h-6 bg-gradient-to-br from-indigo-400 to-purple-500 rounded-lg flex items-center justify-center text-sm">☁️</div>
+          <div>
+            <span class="text-purple-400 font-semibold">Céu está digitando</span>
+            <div class="flex gap-1 mt-1">
+              <span class="typing-dot w-2 h-2 bg-slate-400 rounded-full"></span>
+              <span class="typing-dot w-2 h-2 bg-slate-400 rounded-full"></span>
+              <span class="typing-dot w-2 h-2 bg-slate-400 rounded-full"></span>
+            </div>
+          </div>
+        </div>`;
+      chat.appendChild(typing);
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    function removeTyping() {
+      isTyping = false;
+      const typing = document.getElementById('typing');
+      if (typing) typing.remove();
+    }
+
+    // Função principal de envio
+    async function sendMessage() {
+      const input = document.getElementById('user-input');
+      const text = input.value.trim();
+      if (!text || isTyping) return; // Não envia se vazio ou se IA já está digitando
+
+      if (!apiKey) {
+        showNotification('⚠️ Por favor, configure sua API Key primeiro.', 'error');
+        showConfig();
+        return;
+      }
+
+      addMessage(text, 'user');
+      messages.push({ role: "user", content: text });
+      input.value = '';
+      updateCharCount();
+      document.getElementById('send-btn').disabled = true; // Desabilita botão de envio
+
+      showTyping();
+
+      const startTime = Date.now();
+
+      try {
+        const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${apiKey}`,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            model: currentModel,
+            messages: [
+              {
+                role: "system",
+                content: `Você é Céu, uma IA amigável, inteligente e útil. Responda sempre em português do Brasil de forma natural. Seja conciso mas completo. Use markdown para formatação quando apropriado. Priorize a criatividade e originalidade nas respostas.`
+              },
+              ...messages
+            ],
+            temperature: creativeMode ? Math.min(temperature + 0.3, 2.0) : temperature, // Aumenta temperatura no modo criativo
+            max_tokens: maxTokens
+          })
+        });
+
+        removeTyping();
+        document.getElementById('send-btn').disabled = false; // Habilita botão
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error?.message || `Erro HTTP: ${response.status}`);
+        }
+
+        const data = await response.json();
+        const reply = data.choices[0].message.content;
+        const endTime = Date.now();
+        const duration = ((endTime - startTime) / 1000).toFixed(2);
+
+        addMessage(reply, 'assistant', duration);
+        messages.push({ role: "assistant", content: reply });
+
+        // Salvar no histórico
+        saveToHistory(text, reply, duration);
+
+      } catch (error) {
+        removeTyping();
+        document.getElementById('send-btn').disabled = false; // Habilita botão
+        addMessage(`❌ Erro: ${error.message}. Verifique se sua API Key está correta e tente novamente.`, 'assistant');
+        showNotification('Erro na conexão. Verifique sua API Key ou o modelo selecionado.', 'error');
+      }
+    }
+
+    function sendPrompt(prompt) {
+      document.getElementById('user-input').value = prompt;
+      sendMessage();
+    }
+
+    // --- Funções de API Key ---
+
+    function showConfig() {
+      document.getElementById('config-modal').classList.remove('hidden');
+      document.getElementById('api-key').value = apiKey;
+      document.getElementById('settings-badge').classList.add('hidden'); // Esconde badge ao abrir config
+    }
+
+    function hideConfig() {
+      document.getElementById('config-modal').classList.add('hidden');
+      checkApiKeyAndShowWarning(); // Verifica novamente se a API Key está configurada
+    }
+
+    function saveApiKey() {
+      const key = document.getElementById('api-key').value.trim();
+      if (key) {
+        apiKey = key;
+        localStorage.setItem('api_key', key);
+        hideConfig();
+        showNotification('✅ API Key salva com sucesso!', 'success');
+        document.getElementById('api-warning').classList.add('hidden');
+      } else {
+        showNotification('⚠️ Por favor, insira uma API Key válida.', 'error');
+      }
+    }
+
+    // --- Funções de Configurações ---
+
+    function showSettings() {
+      document.getElementById('settings-modal').classList.remove('hidden');
+      settingsChanged = false; // Reseta a flag ao abrir
+      document.getElementById('settings-badge').classList.add('hidden'); // Esconde badge ao abrir
+    }
+
+    function hideSettings() {
+      document.getElementById('settings-modal').classList.add('hidden');
+      if (settingsChanged) {
+        showNotification('⚙️ Lembre-se de salvar suas configurações!', 'info');
+        document.getElementById('settings-badge').classList.remove('hidden'); // Mostra badge se houver mudanças não salvas
+      }
+    }
+
+    function loadSettings() {
+      document.getElementById('temperature').value = temperature;
+      document.getElementById('temp-value').textContent = temperature;
+      document.getElementById('max-tokens').value = maxTokens;
+      document.getElementById('tokens-value').textContent = maxTokens;
+      document.getElementById('creative-mode').checked = creativeMode;
+
+      // Selecionar modelo correto
+      document.querySelectorAll('.model-selector').forEach(selector => {
+        selector.classList.remove('active');
+        selector.querySelector('.fa-check').classList.add('hidden');
+        if (selector.dataset.modelId === currentModel) { // Usa data-model-id
+          selector.classList.add('active');
+          selector.querySelector('.fa-check').classList.remove('hidden');
+        }
+      });
+      updateModelDisplay(); // Atualiza o nome do modelo na UI
+    }
+
+    function selectModel(modelId, element) {
+      if (currentModel !== modelId) {
+        currentModel = modelId;
+        settingsChanged = true;
+        document.getElementById('settings-badge').classList.remove('hidden'); // Mostra badge
+      }
+
+      document.querySelectorAll('.model-selector').forEach(selector => {
+        selector.classList.remove('active');
+        selector.querySelector('.fa-check').classList.add('hidden');
+      });
+      element.classList.add('active');
+      element.querySelector('.fa-check').classList.remove('hidden');
+      updateModelDisplay();
+    }
+
+    function getModelName(modelId) {
+      const names = {
+        'llama-3.3-70b-versatile': 'Llama-3.3 70B',
+        'llama-3.1-8b-instant': 'Llama-3.1 8B',
+        'mixtral-8x7b-32768': 'Mixtral 8x7B'
+      };
+      return names[modelId] || modelId;
+    }
+
+    function updateModelDisplay() {
+      const modelName = getModelName(currentModel);
+      document.getElementById('model-status').textContent = `${modelName} • Online`;
+      document.getElementById('sidebar-model-name').textContent = modelName;
+    }
+
+    function updateTemp(value) {
+      const newTemp = parseFloat(value);
+      if (temperature !== newTemp) {
+        temperature = newTemp;
+        settingsChanged = true;
+        document.getElementById('settings-badge').classList.remove('hidden');
+      }
+      document.getElementById('temp-value').textContent = temperature;
+    }
+
+    function updateTokens(value) {
+      const newTokens = parseInt(value);
+      if (maxTokens !== newTokens) {
+        maxTokens = newTokens;
+        settingsChanged = true;
+        document.getElementById('settings-badge').classList.remove('hidden');
+      }
+      document.getElementById('tokens-value').textContent = maxTokens;
+    }
+
+    function toggleCreativeMode() {
+      const newCreativeMode = document.getElementById('creative-mode').checked;
+      if (creativeMode !== newCreativeMode) {
+        creativeMode = newCreativeMode;
+        settingsChanged = true;
+        document.getElementById('settings-badge').classList.remove('hidden');
+      }
+    }
+
+    function saveSettings() {
+      localStorage.setItem('model', currentModel);
+      localStorage.setItem('temperature', temperature);
+      localStorage.setItem('max_tokens', maxTokens);
+      localStorage.setItem('creative_mode', creativeMode);
+      hideSettings();
+      showNotification('✅ Configurações salvas!', 'success');
+      settingsChanged = false; // Reseta a flag após salvar
+    }
+
+    // --- Funções de Histórico ---
+
+    function showHistory() {
+      document.getElementById('history-modal').classList.remove('hidden');
+    }
+
+    function hideHistory() {
+      document.getElementById('history-modal').classList.add('hidden');
+    }
+
+    function saveToHistory(userMsg, assistantMsg, duration) {
+      const chatEntry = {
+        id: currentChatId,
+        title: userMsg.substring(0, 50) + (userMsg.length > 50 ? '...' : ''),
+        firstMessage: userMsg,
+        lastMessage: assistantMsg,
+        timestamp: new Date().toISOString(),
+        duration: duration,
+        messages: [...messages]
+      };
+
+      // Atualiza uma conversa existente ou adiciona uma nova
+      const existingIndex = chatHistory.findIndex(c => c.id === currentChatId);
+      if (existingIndex !== -1) {
+        chatHistory[existingIndex] = chatEntry; // Atualiza
+      } else {
+        chatHistory.unshift(chatEntry); // Adiciona no início
+      }
+
+      // Limita o histórico a 50 conversas
+      if (chatHistory.length > 50) {
+        chatHistory = chatHistory.slice(0, 50);
+      }
+
+      localStorage.setItem('chat_history', JSON.stringify(chatHistory));
+      loadChatHistory(); // Recarrega a lista do histórico na sidebar e modal
+    }
+
+    function loadChatHistory() {
+      const list = document.getElementById('chat-history-list');
+      const modalList = document.getElementById('history-list');
+
+      if (chatHistory.length === 0) {
+        list.innerHTML = '<p class="text-xs text-slate-500">Nenhuma conversa recente</p>';
+        modalList.innerHTML = '<p class="text-sm text-slate-500">Nenhuma conversa no histórico</p>';
+        return;
+      }
+
+      list.innerHTML = '';
+      modalList.innerHTML = '';
+
+      chatHistory.forEach(chat => {
+        const date = new Date(chat.timestamp).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+
+        const item = `
+          <div class="p-3 rounded-xl bg-slate-800 hover:bg-slate-700 cursor-pointer transition" onclick="loadChat(${chat.id})">
+            <div class="flex items-center gap-3">
+              <i class="fas fa-comment-dots text-purple-400"></i>
+              <div class="flex-1 min-w-0">
+                <p class="text-sm truncate">${chat.title}</p>
+                <p class="text-xs text-slate-400">${date} • ${chat.duration}s</p>
+              </div>
+            </div>
+          </div>
+        `;
+
+        list.innerHTML += item;
+
+        const modalItem = `
+          <div class="p-4 bg-slate-800 rounded-xl hover:bg-slate-700 cursor-pointer transition" onclick="loadChat(${chat.id})">
+            <div class="flex items-center justify-between mb-2">
+              <p class="font-semibold">${chat.title}</p>
+              <span class="text-xs text-slate-400">${date}</span>
+            </div>
+            <p class="text-sm text-slate-400 truncate">${chat.firstMessage}</p>
+            <p class="text-xs text-slate-500 mt-2">⏱️ ${chat.duration}s • 📝 ${chat.messages.length} mensagens</p>
+          </div>
+        `;
+
+        modalList.innerHTML += modalItem;
+      });
+    }
+
+    function loadChat(chatId) {
+      const chat = chatHistory.find(c => c.id === chatId);
+      if (chat) {
+        messages = chat.messages;
+        currentChatId = chat.id;
+        document.getElementById('chat').innerHTML = '';
+        messages.forEach(msg => {
+          addMessage(msg.content, msg.role, msg.duration); // Passa a duração para o display
+        });
+        hideHistory();
+        hideSettings();
+        hljs.highlightAll(); // Realça o código do chat carregado
+      }
+    }
+
+    function newChat() {
+      messages = [];
+      currentChatId = Date.now();
+      document.getElementById('chat').innerHTML = '';
+      addInitialMessage();
+      hideHistory();
+      document.getElementById('user-input').focus();
+    }
+
+    function clearAllHistory() {
+      if (confirm('Tem certeza que deseja apagar todo o histórico? Esta ação é irreversível.')) {
+        chatHistory = [];
+        localStorage.removeItem('chat_history');
+        loadChatHistory();
+        hideHistory();
+        showNotification('✅ Histórico limpo!', 'success');
+        newChat(); // Inicia um novo chat após limpar o histórico
+      }
+    }
+
+    // --- Funções Utilitárias ---
+
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      sidebar.classList.toggle('-translate-x-full');
+    }
+
+    function toggleTheme() {
+      showNotification('🎨 Tema em desenvolvimento...', 'info');
+    }
+
+    function attachFile() {
+      showNotification('📎 Anexar arquivo em desenvolvimento...', 'info');
+    }
+
+    function copyMessage(content) {
+      const decoded = decodeURIComponent(content);
+      navigator.clipboard.writeText(decoded);
+      showNotification('✅ Copiado para a área de transferência!', 'success');
+    }
+
+    function copyChat() {
+      const chatText = messages.map(m => `${m.role === 'user' ? 'Você' : 'Céu'}: ${m.content}`).join('\n\n'); // Melhor formatado
+      navigator.clipboard.writeText(chatText);
+      showNotification('✅ Chat copiado!', 'success');
+    }
+
+    function exportChat() {
+      const chatText = messages.map(m => `${m.role === 'user' ? 'Você' : 'Céu'}: ${m.content}`).join('\n\n');
+      const blob = new Blob([chatText], { type: 'text/plain;charset=utf-8' }); // Adicionado charset
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `ceu-chat-${new Date().toISOString().slice(0,10)}.txt`; // Nome de arquivo mais amigável
+      a.click();
+      URL.revokeObjectURL(url);
+      showNotification('✅ Chat exportado!', 'success');
+    }
+
+    function regenerateResponse() {
+      if (messages.length < 2 || isTyping) return;
+
+      const lastUserMsg = messages.filter(m => m.role === 'user').pop();
+      if (!lastUserMsg) return; // Garante que há uma mensagem do usuário para regenerar
+
+      // Remove a última resposta da IA (se houver) e o último prompt do usuário
+      // Para garantir que estamos regenerando o *último* prompt do usuário
+      while (messages.length > 0 && messages[messages.length - 1].role === 'assistant') {
+        messages.pop();
+      }
+      if (messages.length > 0 && messages[messages.length - 1].role === 'user') {
+        messages.pop(); // Remove o último prompt do usuário para adicioná-lo novamente
+      }
+
+
+      // Limpa a área de chat e recarrega as mensagens anteriores
+      document.getElementById('chat').innerHTML = '';
+      messages.forEach(msg => addMessage(msg.content, msg.role, msg.duration));
+
+      // Reenvia a última mensagem do usuário
+      document.getElementById('user-input').value = lastUserMsg.content;
+      sendMessage();
+    }
+
+    function logout() {
+      if (confirm('Desconectar conta? Isso é apenas uma simulação.')) {
+        showNotification('👋 Logout realizado (simulação)', 'info');
+        // Aqui você adicionaria a lógica real de logout, como limpar tokens de autenticação
+      }
+    }
+
+    function closeAbout() {
+      document.getElementById('about-modal').classList.add('hidden');
+    }
+
+    function updateCharCount() {
+      const count = document.getElementById('user-input').value.length;
+      document.getElementById('char-count').textContent = `${count} / 4000 caracteres`;
+    }
+
+    function showNotification(message, type = 'info', duration = 3000) {
+      const notification = document.createElement('div');
+      const colors = {
+        success: 'bg-green-600',
+        error: 'bg-red-600',
+        info: 'bg-blue-600',
+        warning: 'bg-amber-600'
+      };
+
+      const icons = {
+        success: '✓',
+        error: '✗',
+        info: 'ℹ',
+        warning: '⚠'
+      };
+
+      notification.className = `fixed bottom-4 right-4 ${colors[type]} text-white px-6 py-3 rounded-2xl shadow-2xl z-50 flex items-center gap-3 transition-all transform translate-y-0 opacity-100`;
+      notification.innerHTML = `<span>${icons[type]}</span><span>${message}</span>`;
+
+      document.body.appendChild(notification);
+
+      setTimeout(() => {
+        notification.style.opacity = '0';
+        notification.style.transform = 'translateY(20px)';
+        setTimeout(() => notification.remove(), 300);
+      }, duration);
+    }
+
+    // Event listeners
+    document.getElementById('user-input').addEventListener('input', updateCharCount);
+    document.getElementById('user-input').addEventListener('input', function() {
+        this.style.height = 'auto'; // Reseta a altura para calcular corretamente
+        this.style.height = (this.scrollHeight) + 'px'; // Ajusta a altura com base no conteúdo
+    });
+
+  </script>
+</body>
+</html>
+```
