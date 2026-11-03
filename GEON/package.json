@@ -4,7 +4,9 @@
   "private": true,
   "description": "GEON — aplicação profissional de inteligência artificial",
   "type": "module",
-  "engines": { "node": ">=20" },
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "start": "node server.js",
     "dev": "node --watch server.js"
@@ -12,6 +14,7 @@
   "dependencies": {
     "express": "^4.21.2",
     "express-rate-limit": "^7.5.0",
-    "helmet": "^8.0.0"
+    "helmet": "^8.0.0",
+    "dotenv": "^16.4.7"
   }
 }
