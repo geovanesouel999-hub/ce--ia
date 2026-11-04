@@ -7,9 +7,23 @@ services:
     startCommand: npm start
     healthCheckPath: /api/health
     envVars:
+      - key: NODE_VERSION
+        value: 22.16.0
+      - key: NODE_ENV
+        value: production
+      - key: TRUST_PROXY
+        value: "1"
       - key: OPENAI_API_KEY
         sync: false
       - key: AI_BASE_URL
         value: https://api.openai.com/v1
       - key: AI_MODEL
         value: gpt-4o-mini
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: DATABASE_URL
+        sync: false
+      - key: DATABASE_SSL
+        value: "false"
+      - key: TAVILY_API_KEY
+        sync: false

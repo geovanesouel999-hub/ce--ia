@@ -4,46 +4,47 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#080d18">
-  <meta name="description" content="GEON — inteligência artificial profissional para pensar, pesquisar e criar.">
+  <meta name="description" content="GEON — inteligência artificial profissional para conversar, pesquisar e programar.">
   <title>GEON — Inteligência Artificial</title>
   <link rel="stylesheet" href="/styles.css">
   <script src="/app.js" defer></script>
 </head>
 <body>
   <div class="app-shell">
-    <aside class="sidebar" id="sidebar">
+    <aside class="sidebar" id="sidebar" aria-label="Menu principal">
       <a class="brand" href="/" aria-label="GEON início">
         <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
         <span class="brand-name">GEON</span>
       </a>
-      <button class="new-chat" id="newChat" type="button"><span>＋</span> Nova conversa</button>
+      <button class="new-chat" id="newChat" type="button"><span aria-hidden="true">＋</span> Nova conversa</button>
       <div class="side-label">SEU ESPAÇO</div>
-      <div class="side-note">Suas conversas ficam salvas neste dispositivo.</div>
+      <div class="side-note" id="memoryStatus" aria-live="polite">Carregando estado da memória…</div>
       <div class="history" id="history" aria-label="Conversas recentes"></div>
       <div class="sidebar-bottom">
-        <div class="secure-note"><span class="secure-dot"></span><span>Conexão protegida</span></div>
-        <div class="version">GEON · versão 1.0.0</div>
+        <button class="privacy-button" id="privacyButton" type="button">Dados e privacidade</button>
+        <div class="secure-note"><span class="secure-dot" aria-hidden="true"></span><span>Conexão protegida</span></div>
+        <div class="version">GEON · versão 1.1.0</div>
       </div>
     </aside>
 
     <main class="main">
       <header class="topbar">
-        <button class="mobile-menu" id="menuButton" type="button" aria-label="Abrir menu">☰</button>
-        <div class="topbar-title"><span class="status-dot"></span> GEON <span class="topbar-subtitle">Inteligência artificial</span></div>
-        <button class="clear-button" id="clearChat" type="button" title="Limpar conversa atual">Limpar</button>
+        <button class="mobile-menu" id="menuButton" type="button" aria-label="Abrir menu" aria-controls="sidebar" aria-expanded="false">☰</button>
+        <div class="topbar-title"><span class="status-dot" aria-hidden="true"></span> GEON <span class="topbar-subtitle">Inteligência artificial</span></div>
+        <button class="clear-button" id="clearChat" type="button" title="Apagar a conversa atual">Limpar conversa</button>
       </header>
 
-      <section class="conversation" id="conversation" aria-live="polite">
+      <section class="conversation" id="conversation" aria-live="polite" aria-relevant="additions text">
         <div class="welcome" id="welcome">
           <div class="welcome-orb" aria-hidden="true"><span></span><span></span><span></span></div>
           <p class="eyebrow">INTELIGÊNCIA EM MOVIMENTO</p>
           <h1>O que vamos <span>construir</span> hoje?</h1>
           <p class="welcome-copy">Sou GEON. Posso ajudar você a investigar ideias, resolver problemas, aprender e criar projetos.</p>
           <div class="suggestions">
-            <button class="suggestion" data-prompt="Crie um plano detalhado para desenvolver um aplicativo." type="button"><span class="suggestion-icon">⌘</span><span><b>Construir um projeto</b><small>Transforme uma ideia em plano</small></span><span class="suggestion-arrow">↗</span></button>
-            <button class="suggestion" data-prompt="Explique como funciona uma rede neural artificial, do básico ao avançado." type="button"><span class="suggestion-icon">◎</span><span><b>Aprender tecnologia</b><small>Entenda conceitos complexos</small></span><span class="suggestion-arrow">↗</span></button>
-            <button class="suggestion" data-prompt="Ajude-me a analisar um problema e comparar possíveis soluções." type="button"><span class="suggestion-icon">⌕</span><span><b>Analisar uma questão</b><small>Compare caminhos e decisões</small></span><span class="suggestion-arrow">↗</span></button>
-            <button class="suggestion" data-prompt="Escreva um exemplo funcional de código JavaScript e explique como executar." type="button"><span class="suggestion-icon">⌁</span><span><b>Programar com IA</b><small>Desenvolva e entenda código</small></span><span class="suggestion-arrow">↗</span></button>
+            <button class="suggestion" data-prompt="Crie um plano detalhado para desenvolver um aplicativo." data-mode="chat" type="button"><span class="suggestion-icon" aria-hidden="true">⌘</span><span><b>Construir um projeto</b><small>Transforme uma ideia em plano</small></span><span class="suggestion-arrow" aria-hidden="true">↗</span></button>
+            <button class="suggestion" data-prompt="Explique como funciona uma rede neural artificial, do básico ao avançado." data-mode="chat" type="button"><span class="suggestion-icon" aria-hidden="true">◎</span><span><b>Aprender tecnologia</b><small>Entenda conceitos complexos</small></span><span class="suggestion-arrow" aria-hidden="true">↗</span></button>
+            <button class="suggestion" data-prompt="Pesquise fontes confiáveis e compare as informações mais recentes sobre inteligência artificial." data-mode="research" type="button"><span class="suggestion-icon" aria-hidden="true">⌕</span><span><b>Pesquisar na web</b><small>Consulte fontes externas</small></span><span class="suggestion-arrow" aria-hidden="true">↗</span></button>
+            <button class="suggestion" data-prompt="Escreva um exemplo funcional de código JavaScript, explique como executar e inclua testes." data-mode="code" type="button"><span class="suggestion-icon" aria-hidden="true">⌁</span><span><b>Programar com IA</b><small>Desenvolva e entenda código</small></span><span class="suggestion-arrow" aria-hidden="true">↗</span></button>
           </div>
         </div>
         <div class="messages" id="messages"></div>
@@ -52,16 +53,39 @@
       <footer class="composer-wrap">
         <form class="composer" id="chatForm">
           <label class="sr-only" for="prompt">Mensagem para GEON</label>
-          <textarea id="prompt" rows="1" maxlength="8000" placeholder="Pergunte qualquer coisa ao GEON..." required></textarea>
+          <textarea id="prompt" rows="1" maxlength="12000" placeholder="Pergunte qualquer coisa ao GEON…" required></textarea>
           <div class="composer-bottom">
-            <span class="composer-hint">GEON pode cometer erros. Verifique informações importantes.</span>
-            <button class="send-button" id="sendButton" type="submit" aria-label="Enviar mensagem"><span>Enviar</span><b>↑</b></button>
+            <div class="mode-control">
+              <label for="mode">Modo</label>
+              <select id="mode" aria-label="Modo de trabalho">
+                <option value="chat">Conversa</option>
+                <option value="research">Pesquisa</option>
+                <option value="code">Programação</option>
+              </select>
+              <span class="mode-status" id="modeStatus">Respostas gerais</span>
+            </div>
+            <button class="send-button" id="sendButton" type="submit" aria-label="Enviar mensagem"><span>Enviar</span><b aria-hidden="true">↑</b></button>
           </div>
         </form>
-        <p class="footer-caption">Feito para pensar, pesquisar e criar.</p>
+        <p class="footer-caption">GEON pode cometer erros. Verifique informações importantes.</p>
       </footer>
     </main>
   </div>
-  <div class="toast" id="toast" role="status"></div>
+
+  <dialog class="privacy-dialog" id="privacyDialog" aria-labelledby="privacyTitle">
+    <div class="dialog-head">
+      <div><p class="eyebrow">CONTROLE DO USUÁRIO</p><h2 id="privacyTitle">Dados e privacidade</h2></div>
+      <button class="dialog-close" id="closePrivacyDialog" type="button" aria-label="Fechar">×</button>
+    </div>
+    <p class="privacy-description" id="privacyDescription">Gerencie o histórico armazenado pelo GEON.</p>
+    <div class="privacy-actions">
+      <button class="privacy-action" id="exportData" type="button">Exportar minhas conversas</button>
+      <button class="privacy-action" id="deleteLocalData" type="button">Apagar dados locais deste navegador</button>
+      <button class="privacy-action danger" id="deleteAllData" type="button">Apagar toda a minha memória</button>
+    </div>
+    <p class="privacy-footnote">A exclusão da memória do GEON não apaga registros que possam existir no provedor do modelo ou no serviço de pesquisa, conforme as políticas desses fornecedores.</p>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
 </body>
 </html>

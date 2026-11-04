@@ -1,64 +1,79 @@
 # GEON
 
-**GEON** é uma aplicação web de inteligência artificial com interface responsiva em português e backend Node.js.
+**GEON** é uma aplicação web de inteligência artificial com interface responsiva em português, backend Node.js e arquitetura modular. O nome oficial do produto é **GEON** e deve permanecer exatamente assim.
 
-> O nome do produto é GEON e deve permanecer exatamente assim em interface, documentação e identidade do projeto.
+## Recursos implementados
 
-## Recursos desta primeira versão
-
-- Interface de chat responsiva para desktop e dispositivos móveis.
-- Conversas recentes salvas localmente no dispositivo.
-- Backend Node.js/Express que mantém a chave do provedor fora do navegador.
-- Integração com API compatível com o formato OpenAI Chat Completions.
-- Limite básico de requisições, validação de entrada e cabeçalhos de segurança.
-- Mensagens exibidas com `textContent`, sem interpretar respostas da IA como HTML.
+- Interface responsiva, navegação por teclado, rótulos acessíveis e suporte a movimento reduzido.
+- Chat com provedor compatível com OpenAI Chat Completions; a chave permanece no servidor.
+- Modo Programação com instruções específicas para código seguro. O GEON não executa código fornecido pelo usuário.
+- Modo Pesquisa integrado ao Tavily, com até cinco fontes HTTPS e conteúdo limitado por resultado.
+- Histórico local como fallback e memória persistente em PostgreSQL quando `DATABASE_URL` está configurada.
+- Controles para exportar conversas, apagar dados locais e apagar toda a memória vinculada ao navegador.
+- Cookie de identidade anônima assinado, `HttpOnly`, `SameSite=Lax` e `Secure` em produção.
+- Cabeçalhos de segurança, Content Security Policy, validação de entrada, proteção de origem e limites de requisição.
+- Testes automatizados com `node:test` e pipeline GitHub Actions.
 
 ## Requisitos
 
-- Node.js 20 ou superior.
-- Uma chave de API de um provedor compatível com OpenAI Chat Completions.
+- Node.js 22 ou superior.
+- Uma chave de API de um provedor compatível com OpenAI Chat Completions para chat e programação.
+- PostgreSQL para memória persistente no servidor.
+- Chave Tavily para habilitar o modo Pesquisa.
 
 ## Executar localmente
 
 1. Entre na pasta `GEON`.
-2. Instale dependências: `npm install`.
+2. Instale as dependências: `npm install`.
 3. Copie `.env.example` para `.env`.
-4. Preencha `OPENAI_API_KEY` no arquivo local `.env`.
-5. Execute `npm start`.
-6. Abra `http://localhost:3000`.
+4. Configure `OPENAI_API_KEY` e um `SESSION_SECRET` aleatório com pelo menos 32 caracteres.
+5. Para memória persistente, configure `DATABASE_URL` com um banco PostgreSQL. Sem ele, o histórico fica apenas no navegador.
+6. Para pesquisa externa, configure `TAVILY_API_KEY`.
+7. Execute `npm start` e abra `http://localhost:3000`.
 
-Nunca envie o arquivo `.env` ao GitHub. A chave deve ser configurada como variável de ambiente no serviço de hospedagem.
+Nunca envie `.env`, chaves, tokens ou dados de usuários ao GitHub.
 
 ## Variáveis de ambiente
 
 | Variável | Finalidade |
 |---|---|
-| `OPENAI_API_KEY` | Chave secreta do provedor |
-| `AI_BASE_URL` | URL base da API compatível |
+| `OPENAI_API_KEY` | Segredo do provedor de IA, somente no backend |
+| `AI_BASE_URL` | URL base de API compatível |
 | `AI_MODEL` | Identificador do modelo |
-| `PORT` | Porta HTTP (padrão 3000) |
+| `SESSION_SECRET` | Assinatura do identificador anônimo do navegador; mínimo 32 caracteres em produção |
+| `DATABASE_URL` | Conexão PostgreSQL para histórico persistente |
+| `DATABASE_SSL` | Define SSL do PostgreSQL (`true` ou `false`) |
+| `TAVILY_API_KEY` | Habilita o modo Pesquisa |
+| `PORT` | Porta HTTP |
+| `TRUST_PROXY` | Use `1` somente atrás de proxy confiável configurado pelo host |
 
-## Implantação
+## Testes e validação
 
-A aplicação pode ser implantada em um serviço que execute Node.js (por exemplo, Render, Railway ou outro host compatível).
+```bash
+npm run check
+npm test
+npm audit --omit=dev
+```
 
-- Build command: `npm install`
-- Start command: `npm start`
-- Health check: `/api/health`
-- Configure as variáveis secretas no painel do host.
-- Use HTTPS e configure limites, monitoramento, política de privacidade e termos antes de abrir o serviço ao público.
+O pipeline `.github/workflows/geon-ci.yml` executa verificação de sintaxe, testes e auditoria das dependências de produção.
 
-## Limitações conhecidas da versão inicial
+## Arquitetura
 
-- A memória de conversas é local ao navegador; não há sincronização entre dispositivos nem contas de usuário.
-- A pesquisa na internet, upload de arquivos, voz e agentes especializados ainda não estão implementados.
-- A disponibilidade de respostas depende da configuração e dos limites do provedor de IA.
-- Antes de um lançamento público, faça testes de carga, revisão de segurança, política de privacidade, moderação e estimativa de custos.
+- `server.js`: inicialização, Helmet, CSP, limites globais e arquivos estáticos.
+- `src/config.js`: configuração e validação do ambiente.
+- `src/identity.js`: cookie assinado e validação de origem.
+- `src/database.js`: persistência PostgreSQL e isolamento por identificador de usuário.
+- `src/ai.js`: integração do modelo no servidor.
+- `src/research.js`: integração de pesquisa externa com Tavily.
+- `src/validation.js`: validação de mensagens, prompts de modo e normalização de fontes.
+- `src/routes.js`: API HTTP e controles de memória.
+- `public/`: interface GEON.
+- `test/`: testes automatizados.
 
-## Segurança
+Consulte `docs/ARCHITECTURE.md`, `docs/LAUNCH-CHECKLIST.md`, `SECURITY.md` e `PRIVACY.md`.
 
-Não inclua chaves reais, senhas ou tokens no código-fonte. O endpoint de chat tem rate limit inicial por IP; para um lançamento de maior escala, acrescente autenticação, proteção contra abuso, observabilidade, quotas por usuário e gestão de custos.
+## Limites importantes antes de um lançamento mundial
 
-## Identidade
+Esta versão é uma base técnica implantável, não uma certificação de prontidão global. A identidade de usuário é anônima e vinculada ao cookie deste navegador; ainda não há contas, recuperação de conta, sincronização autenticada entre dispositivos, cobrança ou quotas por usuário. O modo Pesquisa depende de uma chave Tavily. O histórico em nuvem depende de PostgreSQL provisionado e configurado.
 
-Nome oficial: **GEON**.
+Antes de abrir o acesso público, configure autenticação, quotas por usuário, proteção contra abuso, monitoramento, backups e retenção do banco; execute testes de carga e revisão independente de segurança; publique política de privacidade e termos revisados juridicamente; verifique direitos e disponibilidade da marca GEON; configure domínio, HTTPS e hospedagem; e, se houver distribuição móvel, prepare os requisitos e a revisão das lojas.

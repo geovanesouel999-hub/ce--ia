@@ -1,20 +1,22 @@
 {
   "name": "geon",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
-  "description": "GEON — aplicação profissional de inteligência artificial",
+  "description": "GEON — inteligência artificial profissional com backend seguro",
   "type": "module",
-  "engines": {
-    "node": ">=20"
-  },
+  "engines": { "node": ">=22" },
   "scripts": {
     "start": "node server.js",
-    "dev": "node --watch server.js"
+    "dev": "node --watch server.js",
+    "test": "node --test",
+    "build": "npm run check",
+    "check": "node --check server.js && node --check src/config.js && node --check src/database.js && node --check src/identity.js && node --check src/validation.js && node --check src/ai.js && node --check src/research.js && node --check src/routes.js && node --check public/app.js"
   },
   "dependencies": {
+    "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "express-rate-limit": "^7.5.0",
     "helmet": "^8.0.0",
-    "dotenv": "^16.4.7"
+    "pg": "^8.13.1"
   }
 }
