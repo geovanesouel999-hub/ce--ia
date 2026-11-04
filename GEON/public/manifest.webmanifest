@@ -1,0 +1,16 @@
+{
+  "id": "/",
+  "name": "GEON — Inteligência Artificial",
+  "short_name": "GEON",
+  "description": "Inteligência artificial para conversar, pesquisar, programar e coordenar agentes.",
+  "lang": "pt-BR",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#080d18",
+  "theme_color": "#080d18",
+  "icons": [
+    { "src": "/geon-icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
