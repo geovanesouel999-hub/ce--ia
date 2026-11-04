@@ -9,7 +9,8 @@
 - Modo Programação com instruções específicas para código seguro. O GEON não executa código fornecido pelo usuário.
 - Orquestração multiagente REI com cinco especialistas sequenciais: Pesquisador, Analisador, Programador, Verificador e Gestor.
 - Modo Pesquisa integrado ao Tavily, com até cinco fontes HTTPS e conteúdo limitado por resultado.
-- Histórico local como fallback e memória persistente em PostgreSQL quando `DATABASE_URL` está configurada.
+- Histórico local como fallback e memória persistente de conversas em PostgreSQL quando `DATABASE_URL` está configurada.
+- Histórico REI persistente: registra tarefa, respostas dos cinco especialistas e síntese final, isolado por navegador/identidade anônima e limitado às 50 execuções mais recentes por usuário.
 - Controles para exportar conversas, apagar dados locais e apagar toda a memória vinculada ao navegador.
 - Cookie de identidade anônima assinado, `HttpOnly`, `SameSite=Lax` e `Secure` em produção.
 - Cabeçalhos de segurança, Content Security Policy, validação de entrada, proteção de origem e limites de requisição.
@@ -47,6 +48,15 @@ Nunca envie `.env`, chaves, tokens ou dados de usuários ao GitHub.
 | `TAVILY_API_KEY` | Habilita o modo Pesquisa |
 | `PORT` | Porta HTTP |
 | `TRUST_PROXY` | Use `1` somente atrás de proxy confiável configurado pelo host |
+
+## Histórico de execuções REI
+
+Quando PostgreSQL está configurado, cada execução concluída em `POST /api/agents/run` é registrada automaticamente. O histórico é isolado pelo identificador anônimo do navegador e mantém no máximo 50 execuções por usuário.
+
+- `GET /api/memory/agents`: lista execuções recentes sem expor os textos completos.
+- `GET /api/memory/agents/:id`: recupera tarefa, especialistas e síntese.
+- `DELETE /api/memory/agents/:id`: apaga uma execução.
+- A execução de agentes continua funcionando se a gravação do histórico falhar; nesse caso, a resposta informa `history: null`.
 
 ## Fluxo multiagente
 
