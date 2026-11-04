@@ -1,4 +1,5 @@
 import { Router } from "express";
+import crypto from "node:crypto";
 import rateLimit from "express-rate-limit";
 import {
   databaseIsHealthy,
@@ -7,6 +8,10 @@ import {
   exportConversations,
   getConversation,
   listConversations,
+  listAgentRuns,
+  getAgentRun,
+  saveAgentRun,
+  deleteAgentRun,
   saveConversation
 } from "./database.js";
 import { createChatReply } from "./ai.js";
@@ -78,7 +83,15 @@ router.post("/agents/run", sameOrigin, limiter(2), async (req, res) => {
   }
   try {
     const workflow = await runAgentWorkflow(task);
-    res.set("Cache-Control", "no-store").json(workflow);
+    let history = null;
+    if (config.databaseUrl) {
+      try {
+        history = await saveAgentRun(req.geonUserId, crypto.randomUUID(), task, workflow);
+      } catch (error) {
+        console.error("GEON agent history save failed:", error.code || error.name || "Error");
+      }
+    }
+    res.set("Cache-Control", "no-store").json({ ...workflow, history: history ? { id: history.id, createdAt: history.created_at } : null });
   } catch (error) {
     return aiError(res, error);
   }
@@ -140,6 +153,38 @@ router.delete("/memory/conversations/:id", sameOrigin, limiter(120), async (req,
     return res.json({ ok: true });
   } catch {
     return res.status(503).json({ error: "Não foi possível apagar a conversa." });
+  }
+});
+
+router.get("/memory/agents", async (req, res) => {
+  if (!config.databaseUrl) return memoryUnavailable(res);
+  try {
+    res.set("Cache-Control", "no-store").json({ runs: await listAgentRuns(req.geonUserId) });
+  } catch {
+    res.status(503).json({ error: "Não foi possível acessar o histórico multiagente." });
+  }
+});
+
+router.get("/memory/agents/:id", async (req, res) => {
+  if (!config.databaseUrl) return memoryUnavailable(res);
+  if (!isUuid(req.params.id)) return res.status(400).json({ error: "Identificador de execução inválido." });
+  try {
+    const run = await getAgentRun(req.geonUserId, req.params.id);
+    if (!run) return res.status(404).json({ error: "Execução não encontrada." });
+    res.set("Cache-Control", "no-store").json({ run });
+  } catch {
+    res.status(503).json({ error: "Não foi possível recuperar a execução." });
+  }
+});
+
+router.delete("/memory/agents/:id", sameOrigin, limiter(60), async (req, res) => {
+  if (!config.databaseUrl) return memoryUnavailable(res);
+  if (!isUuid(req.params.id)) return res.status(400).json({ error: "Identificador de execução inválido." });
+  try {
+    await deleteAgentRun(req.geonUserId, req.params.id);
+    return res.json({ ok: true });
+  } catch {
+    return res.status(503).json({ error: "Não foi possível apagar a execução." });
   }
 });
 
