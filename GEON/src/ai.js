@@ -1,13 +1,14 @@
 import { config } from "./config.js";
 import { buildSystemPrompt } from "./validation.js";
 
-export async function createChatReply(messages, mode = "chat") {
+export async function createChatReply(messages, mode = "chat", systemInstructions = "") {
   if (!config.openAiApiKey) {
     const error = new Error("O serviço de IA ainda não foi configurado.");
     error.code = "AI_DISABLED";
     throw error;
   }
 
+  const systemPrompt = [buildSystemPrompt(mode), systemInstructions].filter(Boolean).join("\n\n");
   const response = await fetch(`${config.aiBaseUrl}/chat/completions`, {
     method: "POST",
     headers: {
@@ -16,7 +17,7 @@ export async function createChatReply(messages, mode = "chat") {
     },
     body: JSON.stringify({
       model: config.aiModel,
-      messages: [{ role: "system", content: buildSystemPrompt(mode) }, ...messages],
+      messages: [{ role: "system", content: systemPrompt }, ...messages],
       temperature: 0.5,
       max_tokens: 1800
     }),
