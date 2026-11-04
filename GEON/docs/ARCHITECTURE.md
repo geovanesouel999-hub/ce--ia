@@ -7,6 +7,7 @@ Navegador
             ├── Express + Helmet + CSP + rate limits
             ├── Identidade anônima assinada (cookie HttpOnly)
             ├── Chat / Programação ──> provedor compatível OpenAI
+            ├── Orquestração REI ────> Pesquisador → Analisador → Programador → Verificador → Gestor
             ├── Pesquisa ────────────> Tavily Search API
             └── Memória ─────────────> PostgreSQL (isolamento por user_id)
 ```
@@ -17,6 +18,7 @@ Navegador
 - Conteúdo de pesquisa é externo e não confiável; o frontend o exibe como texto, não como HTML.
 - O modo Programação gera e analisa código, mas não o executa no servidor.
 - O identificador do cookie é pseudônimo, não autenticação de conta.
+- O fluxo de agentes faz seis chamadas sequenciais ao modelo por tarefa; aplique limites de uso e monitore custos antes de ampliar o acesso.
 
 ## Persistência
 
@@ -29,6 +31,7 @@ Navegador
 | GET | `/api/health` | Saúde e capacidades do serviço |
 | GET | `/api/config` | Capacidades públicas, sem segredos |
 | POST | `/api/chat` | Chat ou modo Programação |
+| POST | `/api/agents/run` | Fluxo multiagente REI e cinco especialistas |
 | POST | `/api/research` | Pesquisa externa Tavily |
 | GET | `/api/memory/conversations` | Listar histórico do navegador |
 | GET | `/api/memory/conversations/:id` | Abrir conversa própria |
