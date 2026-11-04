@@ -7,6 +7,7 @@
 - Interface responsiva, navegação por teclado, rótulos acessíveis e suporte a movimento reduzido.
 - Chat com provedor compatível com OpenAI Chat Completions; a chave permanece no servidor.
 - Modo Programação com instruções específicas para código seguro. O GEON não executa código fornecido pelo usuário.
+- Orquestração multiagente REI com cinco especialistas sequenciais: Pesquisador, Analisador, Programador, Verificador e Gestor.
 - Modo Pesquisa integrado ao Tavily, com até cinco fontes HTTPS e conteúdo limitado por resultado.
 - Histórico local como fallback e memória persistente em PostgreSQL quando `DATABASE_URL` está configurada.
 - Controles para exportar conversas, apagar dados locais e apagar toda a memória vinculada ao navegador.
@@ -17,7 +18,7 @@
 ## Requisitos
 
 - Node.js 22 ou superior.
-- Uma chave de API de um provedor compatível com OpenAI Chat Completions para chat e programação.
+- Uma chave de API de um provedor compatível com OpenAI Chat Completions para chat, programação e agentes.
 - PostgreSQL para memória persistente no servidor.
 - Chave Tavily para habilitar o modo Pesquisa.
 
@@ -47,6 +48,10 @@ Nunca envie `.env`, chaves, tokens ou dados de usuários ao GitHub.
 | `PORT` | Porta HTTP |
 | `TRUST_PROXY` | Use `1` somente atrás de proxy confiável configurado pelo host |
 
+## Fluxo multiagente
+
+O endpoint `POST /api/agents/run` recebe `{"task":"..." }` e executa seis chamadas sequenciais ao modelo: cinco especialistas e a síntese final do REI. O limite inicial é de duas execuções por janela de 15 minutos por instância e o texto de entrada é limitado a 5.000 caracteres. O fluxo pode gerar custo de API significativamente maior que uma conversa comum.
+
 ## Testes e validação
 
 ```bash
@@ -64,6 +69,7 @@ O pipeline `.github/workflows/geon-ci.yml` executa verificação de sintaxe, tes
 - `src/identity.js`: cookie assinado e validação de origem.
 - `src/database.js`: persistência PostgreSQL e isolamento por identificador de usuário.
 - `src/ai.js`: integração do modelo no servidor.
+- `src/agents.js`: especialistas e orquestração REI.
 - `src/research.js`: integração de pesquisa externa com Tavily.
 - `src/validation.js`: validação de mensagens, prompts de modo e normalização de fontes.
 - `src/routes.js`: API HTTP e controles de memória.
