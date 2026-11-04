@@ -45,7 +45,7 @@ function aiError(res, error) {
 router.get("/health", async (_req, res) => {
   try {
     const database = await databaseIsHealthy();
-    res.json({ ok: true, app: "GEON", version: "1.2.0", features: { memory: database, research: Boolean(config.tavilyApiKey), chat: Boolean(config.openAiApiKey), agents: Boolean(config.openAiApiKey) } });
+    res.json({ ok: true, app: "GEON", version: "1.3.0", features: { memory: database, research: Boolean(config.tavilyApiKey), chat: Boolean(config.openAiApiKey), agents: Boolean(config.openAiApiKey) } });
   } catch {
     res.status(503).json({ ok: false, app: "GEON", error: "Banco de dados indisponível." });
   }
@@ -54,7 +54,7 @@ router.get("/health", async (_req, res) => {
 router.get("/config", (_req, res) => {
   res.set("Cache-Control", "no-store").json({
     app: "GEON",
-    version: "1.2.0",
+    version: "1.3.0",
     features: {
       chat: Boolean(config.openAiApiKey),
       code: Boolean(config.openAiApiKey),
