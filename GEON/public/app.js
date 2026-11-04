@@ -11,6 +11,7 @@ let busy = false;
 let currentConversationId = null;
 let features = { chat: false, code: false, research: false, memory: false, agents: false };
 let serverMemoryAvailable = false;
+let agentHistoryAvailable = false;
 
 function showToast(message) {
   const toast = $("#toast");
@@ -67,12 +68,64 @@ async function saveConversation() {
       method: "PUT", body: JSON.stringify({ messages: messages.slice(-100) })
     });
     await loadHistory();
+    if (mode === "agents") await loadAgentHistory();
   } catch (error) {
     serverMemoryAvailable = false;
     $("#memoryStatus").textContent = "Memória em nuvem indisponível; usando este navegador.";
     saveLocalHistory();
     showToast(`Memória em nuvem indisponível. ${error.message}`);
   }
+}
+
+function renderAgentHistory(runs) {
+  const host = $("#agentHistory");
+  host.replaceChildren();
+  for (const run of runs.slice(0, 20)) {
+    const button = document.createElement("button");
+    button.className = "history-item";
+    button.type = "button";
+    const date = run.created_at ? new Date(run.created_at).toLocaleString("pt-BR") : "Execução REI";
+    button.textContent = (run.task || "Tarefa REI").slice(0, 52);
+    button.title = `${run.task || "Tarefa REI"} — ${date}`;
+    button.setAttribute("aria-label", `Abrir execução REI: ${run.task || "Tarefa"}`);
+    button.addEventListener("click", () => openAgentRun(run.id));
+    host.append(button);
+  }
+}
+
+async function loadAgentHistory() {
+  const host = $("#agentHistory");
+  if (!serverMemoryAvailable || !agentHistoryAvailable) {
+    host.replaceChildren();
+    const note = document.createElement("div");
+    note.className = "side-note";
+    note.textContent = "Configure PostgreSQL para salvar execuções REI.";
+    host.append(note);
+    return;
+  }
+  try {
+    const data = await request("/api/memory/agents");
+    renderAgentHistory(data.runs || []);
+  } catch {
+    agentHistoryAvailable = false;
+    renderAgentHistory([]);
+  }
+}
+
+async function openAgentRun(id) {
+  try {
+    const data = await request(`/api/memory/agents/${encodeURIComponent(id)}`);
+    const run = data.run;
+    if (!run) throw new Error("Execução não encontrada.");
+    messages = [
+      { role: "user", content: run.task },
+      { role: "assistant", content: agentsToText({ specialists: run.specialists, result: run.result }) }
+    ];
+    currentConversationId = null;
+    renderMessages();
+    $("#sidebar").classList.remove("open");
+    $("#menuButton").setAttribute("aria-expanded", "false");
+  } catch (error) { showToast(error.message); }
 }
 
 function renderHistory(history) {
@@ -290,7 +343,8 @@ async function initialize() {
     $("#memoryStatus").textContent = "Histórico salvo somente neste navegador.";
     $("#privacyDescription").textContent = "A memória em nuvem ainda não está configurada. Enquanto isso, o histórico fica apenas neste navegador e pode ser apagado abaixo.";
   }
-  updateModeStatus(); await loadHistory();
+  agentHistoryAvailable = Boolean(features.memory && features.agents);
+  updateModeStatus(); await loadHistory(); await loadAgentHistory();
 }
 
 form.addEventListener("submit", (event) => { event.preventDefault(); sendMessage(); });
