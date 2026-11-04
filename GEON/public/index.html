@@ -4,7 +4,12 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#080d18">
-  <meta name="description" content="GEON — inteligência artificial profissional para conversar, pesquisar e programar.">
+  <meta name="description" content="GEON — inteligência artificial profissional para conversar, pesquisar, programar e coordenar agentes.">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="icon" href="/geon-icon.svg" type="image/svg+xml">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="GEON">
   <title>GEON — Inteligência Artificial</title>
   <link rel="stylesheet" href="/styles.css">
   <script src="/app.js" defer></script>
@@ -23,7 +28,7 @@
       <div class="sidebar-bottom">
         <button class="privacy-button" id="privacyButton" type="button">Dados e privacidade</button>
         <div class="secure-note"><span class="secure-dot" aria-hidden="true"></span><span>Conexão protegida</span></div>
-        <div class="version">GEON · versão 1.1.0</div>
+        <div class="version">GEON · versão 1.2.0</div>
       </div>
     </aside>
 
@@ -61,13 +66,14 @@
                 <option value="chat">Conversa</option>
                 <option value="research">Pesquisa</option>
                 <option value="code">Programação</option>
+                <option value="agents">Agentes REI (6 etapas)</option>
               </select>
               <span class="mode-status" id="modeStatus">Respostas gerais</span>
             </div>
             <button class="send-button" id="sendButton" type="submit" aria-label="Enviar mensagem"><span>Enviar</span><b aria-hidden="true">↑</b></button>
           </div>
         </form>
-        <p class="footer-caption">GEON pode cometer erros. Verifique informações importantes.</p>
+        <p class="footer-caption">GEON pode cometer erros. Verifique informações importantes. O modo Agentes usa várias chamadas de API e pode ter custo maior.</p>
       </footer>
     </main>
   </div>
