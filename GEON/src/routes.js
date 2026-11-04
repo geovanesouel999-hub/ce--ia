@@ -10,6 +10,7 @@ import {
   saveConversation
 } from "./database.js";
 import { createChatReply } from "./ai.js";
+import { runAgentWorkflow } from "./agents.js";
 import { searchWeb } from "./research.js";
 import { conversationTitle, validateMessages } from "./validation.js";
 import { isUuid, sameOrigin } from "./identity.js";
@@ -28,10 +29,18 @@ function memoryUnavailable(res) {
   return res.status(503).json({ error: "A memória em nuvem ainda não foi configurada pelo administrador." });
 }
 
+function aiError(res, error) {
+  if (error instanceof TypeError) return res.status(400).json({ error: error.message });
+  if (error.code === "AI_DISABLED") return res.status(503).json({ error: "O serviço de IA ainda não foi configurado pelo administrador." });
+  if (error.name === "TimeoutError" || error.name === "AbortError") return res.status(504).json({ error: "O serviço de IA excedeu o tempo limite. Tente novamente." });
+  const status = error.code === "AI_UPSTREAM" || error.code === "AI_EMPTY" ? 502 : 500;
+  return res.status(status).json({ error: error.message || "Não foi possível concluir a solicitação." });
+}
+
 router.get("/health", async (_req, res) => {
   try {
     const database = await databaseIsHealthy();
-    res.json({ ok: true, app: "GEON", version: "1.1.0", features: { memory: database, research: Boolean(config.tavilyApiKey), chat: Boolean(config.openAiApiKey) } });
+    res.json({ ok: true, app: "GEON", version: "1.2.0", features: { memory: database, research: Boolean(config.tavilyApiKey), chat: Boolean(config.openAiApiKey), agents: Boolean(config.openAiApiKey) } });
   } catch {
     res.status(503).json({ ok: false, app: "GEON", error: "Banco de dados indisponível." });
   }
@@ -40,12 +49,13 @@ router.get("/health", async (_req, res) => {
 router.get("/config", (_req, res) => {
   res.set("Cache-Control", "no-store").json({
     app: "GEON",
-    version: "1.1.0",
+    version: "1.2.0",
     features: {
       chat: Boolean(config.openAiApiKey),
       code: Boolean(config.openAiApiKey),
       research: Boolean(config.tavilyApiKey),
-      memory: Boolean(config.databaseUrl)
+      memory: Boolean(config.databaseUrl),
+      agents: Boolean(config.openAiApiKey)
     }
   });
 });
@@ -57,11 +67,20 @@ router.post("/chat", sameOrigin, limiter(30), async (req, res) => {
     const reply = await createChatReply(messages, mode);
     res.json({ reply });
   } catch (error) {
-    if (error instanceof TypeError) return res.status(400).json({ error: error.message });
-    if (error.code === "AI_DISABLED") return res.status(503).json({ error: "O serviço de IA ainda não foi configurado pelo administrador." });
-    if (error.name === "TimeoutError" || error.name === "AbortError") return res.status(504).json({ error: "O serviço de IA excedeu o tempo limite. Tente novamente." });
-    const status = error.code === "AI_UPSTREAM" || error.code === "AI_EMPTY" ? 502 : 500;
-    return res.status(status).json({ error: error.message || "Não foi possível concluir a solicitação." });
+    return aiError(res, error);
+  }
+});
+
+router.post("/agents/run", sameOrigin, limiter(2), async (req, res) => {
+  const task = typeof req.body?.task === "string" ? req.body.task.trim() : "";
+  if (!task || task.length > 5000) {
+    return res.status(400).json({ error: "A tarefa deve ter entre 1 e 5.000 caracteres." });
+  }
+  try {
+    const workflow = await runAgentWorkflow(task);
+    res.set("Cache-Control", "no-store").json(workflow);
+  } catch (error) {
+    return aiError(res, error);
   }
 });
 
