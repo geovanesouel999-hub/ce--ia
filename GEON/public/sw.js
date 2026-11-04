@@ -1,4 +1,4 @@
-const CACHE = "geon-shell-v1";
+const CACHE = "geon-shell-v2";
 const SHELL = ["/", "/index.html", "/styles.css", "/app.js", "/manifest.webmanifest", "/geon-icon.svg"];
 
 self.addEventListener("install", (event) => {
@@ -18,7 +18,7 @@ self.addEventListener("fetch", (event) => {
       const copy = response.clone();
       caches.open(CACHE).then((cache) => cache.put("/", copy));
       return response;
-    }).catch(() => caches.match("/") ));
+    }).catch(() => caches.match("/")));
     return;
   }
   event.respondWith(caches.match(request).then((cached) => cached || fetch(request)));
