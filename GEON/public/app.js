@@ -263,6 +263,7 @@ async function sendMessage(text) {
     $("#typingIndicator")?.remove();
     addMessage("assistant", reply);
     await saveConversation();
+    if (mode === "agents") await loadAgentHistory();
   } catch (error) {
     $("#typingIndicator")?.remove();
     const message = error instanceof Error ? error.message : "Falha inesperada.";
