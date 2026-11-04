@@ -26,6 +26,17 @@ export async function initializeDatabase() {
     )
   `);
   await pool.query(`CREATE INDEX IF NOT EXISTS geon_conversations_user_updated_idx ON geon_conversations (user_id, updated_at DESC)`);
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS geon_agent_runs (
+      id UUID PRIMARY KEY,
+      user_id UUID NOT NULL,
+      task VARCHAR(5000) NOT NULL,
+      specialists JSONB NOT NULL,
+      result TEXT NOT NULL,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    )
+  `);
+  await pool.query(`CREATE INDEX IF NOT EXISTS geon_agent_runs_user_created_idx ON geon_agent_runs (user_id, created_at DESC)`);
   return true;
 }
 
@@ -98,4 +109,59 @@ export async function databaseIsHealthy() {
   if (!pool) return false;
   await pool.query("SELECT 1");
   return true;
+}
+
+
+export async function saveAgentRun(userId, id, task, workflow) {
+  requirePool();
+  const specialists = Array.isArray(workflow?.specialists) ? workflow.specialists : [];
+  const result = typeof workflow?.result === "string" ? workflow.result : "";
+  const { rows } = await pool.query(
+    `INSERT INTO geon_agent_runs (id, user_id, task, specialists, result)
+     VALUES ($1, $2, $3, $4::jsonb, $5)
+     ON CONFLICT (id) DO NOTHING
+     RETURNING id, task, created_at`,
+    [id, userId, task, JSON.stringify(specialists), result]
+  );
+  if (!rows[0]) {
+    const error = new Error("Não foi possível registrar a execução multiagente.");
+    error.code = "AGENT_RUN_CONFLICT";
+    throw error;
+  }
+  await pool.query(
+    `DELETE FROM geon_agent_runs
+     WHERE user_id = $1 AND id NOT IN (
+       SELECT id FROM geon_agent_runs WHERE user_id = $1
+       ORDER BY created_at DESC LIMIT 50
+     )`,
+    [userId]
+  );
+  return rows[0];
+}
+
+export async function listAgentRuns(userId) {
+  requirePool();
+  const { rows } = await pool.query(
+    "SELECT id, task, created_at, jsonb_array_length(specialists) AS specialist_count FROM geon_agent_runs WHERE user_id = $1 ORDER BY created_at DESC LIMIT 50",
+    [userId]
+  );
+  return rows;
+}
+
+export async function getAgentRun(userId, id) {
+  requirePool();
+  const { rows } = await pool.query(
+    "SELECT id, task, specialists, result, created_at FROM geon_agent_runs WHERE user_id = $1 AND id = $2 LIMIT 1",
+    [userId, id]
+  );
+  return rows[0] || null;
+}
+
+export async function deleteAgentRun(userId, id) {
+  requirePool();
+  const result = await pool.query(
+    "DELETE FROM geon_agent_runs WHERE user_id = $1 AND id = $2",
+    [userId, id]
+  );
+  return result.rowCount > 0;
 }
